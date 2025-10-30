@@ -51,7 +51,6 @@ h1 {
   object-fit: cover;
 }
 
-/* オーバーレイ枠（動画と完全一致） */
 #overlay {
   position: absolute;
   top: 0;
