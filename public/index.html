@@ -115,51 +115,49 @@
 </div>
   
 <script>
-let currentChannel = 1;
+  let currentChannel = 1;
 
-window.onload = () => {
-  changeChannel(1);
-};
+  window.onload = () => {
+    changeChannel(1);
+  };
 
-function changeChannel(channelNumber) {
-  currentChannel = channelNumber;
+  window.changeChannel = function(channelNumber) {
+    currentChannel = channelNumber;
 
-  const streamUrl = `https://example.com/channel${channelNumber}.m3u8`;
-  const videoSource = document.getElementById('videoSource');
-  const fallbackSource = document.getElementById('fallbackSource');
-  const player = document.getElementById('livePlayer');
-  const overlay = document.getElementById('overlay');
+    const streamUrl = `https://example.com/channel${channelNumber}.m3u8`;
+    const videoSource = document.getElementById('videoSource');
+    const fallbackSource = document.getElementById('fallbackSource');
+    const player = document.getElementById('livePlayer');
+    const overlay = document.getElementById('overlay');
 
-  videoSource.src = streamUrl;
-  fallbackSource.removeAttribute('src');
-  player.load();
+    videoSource.src = streamUrl;
+    fallbackSource.removeAttribute('src');
+    player.load();
 
-  fetch(streamUrl, { method: 'HEAD' })
-    .then(response => {
-      if (response.ok) {
-        overlay.style.display = 'none';
-        player.load();
-        player.play();
-      } else {
+    fetch(streamUrl, { method: 'HEAD' })
+      .then(response => {
+        if (response.ok) {
+          overlay.style.display = 'none';
+          player.load();
+          player.play();
+        } else {
+          videoSource.removeAttribute('src');
+          fallbackSource.src = '/fallback/colorbars.mp4';
+          overlay.style.display = 'flex';
+          player.load();
+          player.play();
+        }
+      })
+      .catch(() => {
         videoSource.removeAttribute('src');
         fallbackSource.src = '/fallback/colorbars.mp4';
         overlay.style.display = 'flex';
         player.load();
         player.play();
-      }
-    })
-    .catch(() => {
-      videoSource.removeAttribute('src');
-      fallbackSource.src = '/fallback/colorbars.mp4';
-      overlay.style.display = 'flex';
-      player.load();
-      player.play();
-    });
-}
+      });
+  };
 
-function startStreaming() {
-  alert(`チャンネル${currentChannel}の配信を開始するには、OBSで以下を設定してください：
-
-RTMPサーバー：rtmp://your-server/live
-ストリームキー：channel${currentChannel}-key`);
-}
+  window.startStreaming = function() {
+    alert(`チャンネル${currentChannel}の配信を開始するには、OBSで以下を設定してください：\n\nRTMPサーバー：rtmp://your-server/live\nストリームキー：channel${currentChannel}-key`);
+  };
+</script>
