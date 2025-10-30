@@ -11,29 +11,51 @@
       margin: 0;
       padding: 0;
     }
+
     h1 {
       margin-top: 20px;
+      font-size: 28px;
+      color: #333;
     }
+
     .channel-buttons {
       margin: 20px 0;
     }
+
     .channel-buttons button {
       margin: 5px;
       padding: 10px 15px;
       font-size: 16px;
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
+      transition: background-color 0.2s ease;
     }
+
+    .channel-buttons button:hover {
+      background-color: #1976d2;
+    }
+
     #videoContainer {
       position: relative;
       width: 80%;
       max-width: 960px;
       margin: 0 auto;
-    }
-    video {
-      width: 100%;
       aspect-ratio: 16 / 9;
       background-color: black;
+      overflow: hidden;
+      border-radius: 6px;
+      border: 2px solid #333;
     }
+
+    #livePlayer {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     #overlay {
       position: absolute;
       top: 0;
@@ -50,6 +72,7 @@
       padding: 20px;
       z-index: 2;
     }
+
     #startButton {
       margin-top: 15px;
       padding: 10px 20px;
@@ -57,7 +80,13 @@
       background-color: #ff5722;
       border: none;
       color: white;
+      border-radius: 4px;
       cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    #startButton:hover {
+      background-color: #e64a19;
     }
   </style>
 </head>
@@ -73,50 +102,63 @@
   </div>
 
   <div id="videoContainer">
-<video id="livePlayer" controls autoplay muted>
-  <source id="videoSource" src="https://example.com/channel1.m3u8" type="application/x-mpegURL">
-  <source id="fallbackSource" src="/fallback/colorbars.mp4" type="video/mp4">
-  お使いのブラウザはHLSをサポートしていません。
-</video>
-  <div id="overlay">
-    <p>現在放送休止中です。あなたも配信してみませんか？</p>
-    <button id="startButton" onclick="startStreaming()">配信を開始する</button>
+    <video id="livePlayer" controls autoplay muted>
+      <source id="videoSource" src="https://example.com/channel1.m3u8" type="application/x-mpegURL">
+      <source id="fallbackSource" src="/fallback/colorbars.mp4" type="video/mp4">
+      お使いのブラウザはHLSをサポートしていません。
+    </video>
+    <div id="overlay">
+      <p>現在放送休止中です。あなたも配信してみませんか？</p>
+      <button id="startButton" onclick="startStreaming()">配信を開始する</button>
+    </div>
   </div>
-</div>
 
   <script>
     let currentChannel = 1;
 
+    window.onload = () => {
+      changeChannel(1);
+    };
+
     function changeChannel(channelNumber) {
       currentChannel = channelNumber;
-      const videoSource = document.getElementById('videoSource');
-      videoSource.src = `https://example.com/channel${channelNumber}.m3u8`;
-      const player = document.getElementById('livePlayer');
-      player.load();
-      checkStreamStatus();
-    }
 
-    function checkStreamStatus() {
-      const streamUrl = document.getElementById('videoSource').src;
+      const videoSource = document.getElementById('videoSource');
+      const fallbackSource = document.getElementById('fallbackSource');
+      const player = document.getElementById('livePlayer');
+      const overlay = document.getElementById('overlay');
+
+      const streamUrl = `https://example.com/channel${channelNumber}.m3u8`;
+      videoSource.src = streamUrl;
+      fallbackSource.removeAttribute('src');
+      player.load();
+
       fetch(streamUrl, { method: 'HEAD' })
         .then(response => {
-          const overlay = document.getElementById('overlay');
           if (response.ok) {
             overlay.style.display = 'none';
+            player.load();
+            player.play();
           } else {
-            overlay.style.display = 'flex';
+            fallbackSource.src = '/fallback/colorbars.mp4';
+            videoSource.removeAttribute('src');
+            overlay.style.display = 'none';
+            player.load();
+            player.play();
           }
         })
         .catch(() => {
-          document.getElementById('overlay').style.display = 'flex';
+          fallbackSource.src = '/fallback/colorbars.mp4';
+          videoSource.removeAttribute('src');
+          overlay.style.display = 'none';
+          player.load();
+          player.play();
         });
     }
 
     function startStreaming() {
       alert(`チャンネル${currentChannel}の配信を開始するには、OBSでストリームキー「channel${currentChannel}-key」を使ってください。`);
     }
-
-    window.onload = checkStreamStatus;
   </script>
 </body>
 </html>
