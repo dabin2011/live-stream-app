@@ -94,22 +94,22 @@
   <h1>１２チャンネル ライブ配信</h1>
 
   
-  <div class="channel-buttons">
-    <script>
-      for (let i = 1; i <= 12; i++) {
-        document.write(`<button onclick="changeChannel(${i})">チャンネル ${i}</button>`);
-      }
-    </script>
-  </div>
+<div class="channel-buttons">
+  <script>
+    for (let i = 1; i <= 12; i++) {
+      document.write(`<button onclick="changeChannel(${i})">チャンネル ${i}</button>`);
+    }
+  </script>
+</div>
 
 <div id="videoContainer">
   <video id="livePlayer" controls autoplay muted>
-    <source id="videoSource" src="https://example.com/channel1.m3u8" type="application/x-mpegURL">
-    <source id="fallbackSource" src="/fallback/colorbars.mp4" type="video/mp4">
+    <source id="videoSource" src="" type="application/x-mpegURL">
+    <source id="fallbackSource" src="" type="video/mp4">
     お使いのブラウザはHLSをサポートしていません。
   </video>
   <div id="overlay">
-    <p>現在放送休止中です。あなたも配信してみませんか？</p>
+    <p>現在放送休止中です。あなたもこのチャンネルで配信してみませんか？</p>
     <button id="startButton" onclick="startStreaming()">配信を開始する</button>
   </div>
 </div>
