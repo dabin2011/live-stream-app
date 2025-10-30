@@ -2,12 +2,12 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>１２チャンネル ライブ配信</title>
+  <title>ライブ配信チャンネル</title>
   <style>
     body {
       font-family: sans-serif;
       text-align: center;
-      background-color: #f0f0f0;
+      background-color: #f9f9f9;
     }
     h1 {
       margin-top: 20px;
@@ -21,20 +21,47 @@
       font-size: 16px;
       cursor: pointer;
     }
-    video {
+    #videoContainer {
+      position: relative;
+      display: inline-block;
       width: 80%;
       max-width: 800px;
+    }
+    video {
+      width: 100%;
       height: auto;
-      border: 2px solid #333;
       background-color: black;
+    }
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      padding: 20px;
+    }
+    #startButton {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #ff5722;
+      border: none;
+      color: white;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1>１２チャンネル ライブ配信</h1>
+  <h1>ライブ配信チャンネル</h1>
 
   <div class="channel-buttons">
-    <!-- 12 buttons -->
     <script>
       for (let i = 1; i <= 12; i++) {
         document.write(`<button onclick="changeChannel(${i})">チャンネル ${i}</button>`);
@@ -42,19 +69,50 @@
     </script>
   </div>
 
-  <video id="livePlayer" controls autoplay>
-    <source id="videoSource" src="https://example.com/channel1.m3u8" type="application/x-mpegURL">
-    お使いのブラウザはHLSをサポートしていません。
-  </video>
+  <div id="videoContainer">
+    <video id="livePlayer" controls autoplay muted>
+      <source id="videoSource" src="https://example.com/channel1.m3u8" type="application/x-mpegURL">
+      お使いのブラウザはHLSをサポートしていません。
+    </video>
+    <div id="overlay">
+      <p>現在放送休止中です。あなたも配信してみませんか？</p>
+      <button id="startButton" onclick="startStreaming()">配信を開始する</button>
+    </div>
+  </div>
 
   <script>
+    let currentChannel = 1;
+
     function changeChannel(channelNumber) {
+      currentChannel = channelNumber;
       const videoSource = document.getElementById('videoSource');
       videoSource.src = `https://example.com/channel${channelNumber}.m3u8`;
       const player = document.getElementById('livePlayer');
       player.load();
-      player.play();
+      checkStreamStatus();
     }
+
+    function checkStreamStatus() {
+      // 簡易的なチェック：HLSのURLにアクセスして配信中か確認（実際はAPIやメタ情報を使う）
+      fetch(document.getElementById('videoSource').src, { method: 'HEAD' })
+        .then(response => {
+          const overlay = document.getElementById('overlay');
+          if (response.ok) {
+            overlay.style.display = 'none';
+          } else {
+            overlay.style.display = 'flex';
+          }
+        })
+        .catch(() => {
+          document.getElementById('overlay').style.display = 'flex';
+        });
+    }
+
+    function startStreaming() {
+      alert(`チャンネル${currentChannel}の配信を開始するには、OBSでストリームキー「channel${currentChannel}-key」を使ってください。`);
+    }
+
+    window.onload = checkStreamStatus;
   </script>
 </body>
 </html>
