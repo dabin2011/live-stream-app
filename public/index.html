@@ -2,12 +2,14 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ライブ配信チャンネル</title>
+  <title>１２チャンネル ライブ配信</title>
   <style>
     body {
       font-family: sans-serif;
       text-align: center;
       background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
     }
     h1 {
       margin-top: 20px;
@@ -23,13 +25,13 @@
     }
     #videoContainer {
       position: relative;
-      display: inline-block;
       width: 80%;
-      max-width: 800px;
+      max-width: 960px;
+      margin: 0 auto;
     }
     video {
       width: 100%;
-      height: auto;
+      aspect-ratio: 16 / 9;
       background-color: black;
     }
     #overlay {
@@ -46,6 +48,7 @@
       align-items: center;
       font-size: 20px;
       padding: 20px;
+      z-index: 2;
     }
     #startButton {
       margin-top: 15px;
@@ -59,7 +62,7 @@
   </style>
 </head>
 <body>
-  <h1>ライブ配信チャンネル</h1>
+  <h1>１２チャンネル ライブ配信</h1>
 
   <div class="channel-buttons">
     <script>
@@ -93,8 +96,8 @@
     }
 
     function checkStreamStatus() {
-      // 簡易的なチェック：HLSのURLにアクセスして配信中か確認（実際はAPIやメタ情報を使う）
-      fetch(document.getElementById('videoSource').src, { method: 'HEAD' })
+      const streamUrl = document.getElementById('videoSource').src;
+      fetch(streamUrl, { method: 'HEAD' })
         .then(response => {
           const overlay = document.getElementById('overlay');
           if (response.ok) {
