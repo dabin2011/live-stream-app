@@ -1,22 +1,55 @@
-const express = require('express');
-const path = require('path');
-const app = express();
-const PORT = process.env.PORT || 3000;
+<script>
+  let currentChannel = 1;
 
-// 静的ファイル（HTML, CSS, JS, MP4など）を public フォルダから配信
-app.use(express.static(path.join(__dirname, 'public')));
+  // 初期化：チャンネル1を表示
+  window.onload = () => {
+    changeChannel(1);
+  };
 
-// ルートアクセス時に index.html を返す
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
-});
+  // チャンネル切り替え処理
+  function changeChannel(channelNumber) {
+    currentChannel = channelNumber;
 
-// その他のルートは 404
-app.use((req, res) => {
-  res.status(404).send('ページが見つかりません');
-});
+    const videoSource = document.getElementById('videoSource');
+    const fallbackSource = document.getElementById('fallbackSource');
+    const player = document.getElementById('livePlayer');
+    const overlay = document.getElementById('overlay');
 
-// サーバー起動
-app.listen(PORT, () => {
-  console.log(`サーバーがポート ${PORT} で起動しました`);
-});
+    // HLSストリームURLを更新
+    const streamUrl = `https://example.com/channel${channelNumber}.m3u8`;
+    videoSource.src = streamUrl;
+    fallbackSource.removeAttribute('src');
+    player.load();
+
+    // 配信ステータスを確認
+    fetch(streamUrl, { method: 'HEAD' })
+      .then(response => {
+        if (response.ok) {
+          // 配信中：HLS再生、オーバーレイ非表示
+          overlay.style.display = 'none';
+          player.load();
+          player.play();
+        } else {
+          // 配信なし：カラーバー再生、オーバーレイ表示
+          fallbackSource.src = '/fallback/colorbars.mp4';
+          videoSource.removeAttribute('src');
+          overlay.style.display = 'flex';
+          player.load();
+          player.play();
+        }
+      })
+      .catch(() => {
+        // エラー時もカラーバー再生
+        fallbackSource.src = '/fallback/colorbars.mp4';
+        videoSource.removeAttribute('src');
+        overlay.style.display = 'flex';
+        player.load();
+        player.play();
+      });
+  }
+
+  // OBS配信案内
+  function startStreaming() {
+    alert(`チャンネル${currentChannel}の配信を開始するには、OBSでストリームキー「channel${currentChannel}-key」を使ってください。`);
+  }
+</script>
