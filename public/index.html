@@ -73,15 +73,15 @@
   </div>
 
   <div id="videoContainer">
-    <video id="livePlayer" controls autoplay muted>
-      <source id="videoSource" src="https://example.com/channel1.m3u8" type="application/x-mpegURL">
-      お使いのブラウザはHLSをサポートしていません。
-    </video>
-    <div id="overlay">
-      <p>現在放送休止中です。あなたも配信してみませんか？</p>
-      <button id="startButton" onclick="startStreaming()">配信を開始する</button>
-    </div>
+  <video id="livePlayer" controls autoplay muted>
+    <source id="videoSource" src="https://example.com/channel1.m3u8" type="application/x-mpegURL">
+    お使いのブラウザはHLSをサポートしていません。
+  </video>
+  <div id="overlay">
+    <p>現在放送休止中です。あなたも配信してみませんか？</p>
+    <button id="startButton" onclick="startStreaming()">配信を開始する</button>
   </div>
+</div>
 
   <script>
     let currentChannel = 1;
